@@ -273,7 +273,6 @@ export default function Lab1() {
                     Please
                     <a href="https://www.lipsum.com" id="wd-lipsum">click here</a>
                     to get dummy text<br/>
-#####
                     Please
                     <a href="https://github.com/DanMccue/CS4450-A1" id="wd-github" >click here</a>
                     to go to my GitHub repository
