@@ -21,6 +21,10 @@ export default function labs() {
          <Link href="/" id="wd-kambaz-link">
            Kambaz</Link>
        </li>
+       <li>
+          <Link href="https://github.com/DanMccue/CS4450-A1" id="wd-github">
+            GitHub Repository </Link>
+        </li>
      </ul>
    </div>
 );}
