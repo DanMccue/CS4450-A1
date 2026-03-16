@@ -1,26 +1,37 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 export default function AccountNavigation() {
+  const pathname = usePathname();
+  const { currentUser } = useSelector(
+    (state: RootState) => state.accountReducer
+  );
+  const links = currentUser
+    ? [{ label: "Profile", path: "/account/profile", id: "wd-account-profile-link" }]
+    : [
+        { label: "Signin", path: "/account/signin", id: "wd-account-signin-link" },
+        { label: "Signup", path: "/account/signup", id: "wd-account-signup-link" },
+      ];
+
   return (
     <div id="wd-account-navigation" className="wd list-group fs-5 rounded-0">
-      <Link href="/account/signin"
-        id="wd-account-signin-link"
-        className="list-group-item active border-0">
-        Signin
-      </Link>
-
-      <Link href="/account/signup"
-        id="wd-account-signup-link"
-        className="list-group-item text-danger border-0">
-        Signup
-      </Link>
-
-      <Link href="/account/profile"
-        id="wd-account-profile-link"
-        className="list-group-item text-danger border-0">
-        Profile
-      </Link>
+      {links.map((link) => (
+        <Link
+          key={link.path}
+          href={link.path}
+          id={link.id}
+          className={`list-group-item border-0 ${
+            pathname.endsWith(link.path.split("/").pop() ?? "")
+              ? "active"
+              : "text-danger"
+          }`}
+        >
+          {link.label}
+        </Link>
+      ))}
     </div>
   );
 }
