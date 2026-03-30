@@ -10,9 +10,11 @@ import { BsChevronDown } from "react-icons/bs";
 import { Button, Form, InputGroup, ListGroup } from "react-bootstrap";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../store";
-import { deleteAssignment } from "./reducer";
+import { deleteAssignment, setAssignments } from "./reducer";
+import * as client from "./client";
 
 type Assignment = {
   _id: string;
@@ -35,6 +37,26 @@ export default function Assignments() {
   ) as { currentUser: { role?: string } | null };
   const dispatch = useDispatch();
   const canManageAssignments = currentUser?.role === "FACULTY";
+
+  useEffect(() => {
+    if (!courseId) {
+      dispatch(setAssignments([]));
+      return;
+    }
+    client
+      .findAssignmentsForCourse(courseId)
+      .then((assignmentsFromServer) => {
+        dispatch(setAssignments(assignmentsFromServer));
+      })
+      .catch(() => {
+        dispatch(setAssignments([]));
+      });
+  }, [courseId, dispatch]);
+
+  const onDeleteAssignment = async (assignmentId: string) => {
+    await client.deleteAssignment(assignmentId);
+    dispatch(deleteAssignment(assignmentId));
+  };
 
   return (
     <div id="wd-assignments">
@@ -95,9 +117,7 @@ export default function Assignments() {
       </h3>
 
       <ListGroup className="rounded-0 rounded-bottom">
-        {assignments
-          .filter((assignment) => assignment.course === courseId)
-          .map((assignment) => (
+        {assignments.map((assignment) => (
             <ListGroup.Item
               key={assignment._id}
               className="p-3 ps-0 border-0 border-start border-success border-3 d-flex align-items-center"
@@ -105,16 +125,12 @@ export default function Assignments() {
               <BsGripVertical className="fs-3 text-secondary me-2" />
               <BsFileEarmarkText className="fs-3 text-success me-3" />
               <div className="flex-grow-1">
-                {canManageAssignments ? (
-                  <Link
-                    href={`/courses/${courseId}/assignments/${assignment._id}`}
-                    className="wd-assignment-link text-decoration-none text-dark fw-bold fs-5"
-                  >
-                    {assignment.title}
-                  </Link>
-                ) : (
-                  <span className="fw-bold fs-5">{assignment.title}</span>
-                )}
+                <Link
+                  href={`/courses/${courseId}/assignments/${assignment._id}`}
+                  className="wd-assignment-link text-decoration-none text-dark fw-bold fs-5"
+                >
+                  {assignment.title}
+                </Link>
                 <br />
                 <span className="text-danger">Multiple Modules</span> |
                 <span className="text-secondary">
@@ -138,7 +154,7 @@ export default function Assignments() {
                         `Delete assignment "${assignment.title}"? This cannot be undone.`
                       )
                     ) {
-                      dispatch(deleteAssignment(assignment._id));
+                      onDeleteAssignment(assignment._id);
                     }
                   }}
                 />

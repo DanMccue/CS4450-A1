@@ -3,6 +3,10 @@
 import { Nav, NavItem, NavLink } from "react-bootstrap";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import HTTP_SERVER from "@/lib/http-server";
+
+const FRONTEND_REPO_URL = "https://github.com/DanMccue/CS4450-A1";
+const BACKEND_REPO_URL = "https://github.com/DanMccue/kambaz-node-server-app";
 
 export default function TOC() {
   const pathname = usePathname();
@@ -59,13 +63,33 @@ export default function TOC() {
         </NavLink>
       </NavItem>
       <NavItem>
+        <NavLink
+          href="/labs/lab5"
+          as={Link}
+          id="wd-lab5-link"
+          className={`nav-link ${pathname.includes("lab5") ? "active" : ""}`}
+        >
+          Lab 5
+        </NavLink>
+      </NavItem>
+      <NavItem>
         <NavLink href="/" as={Link} id="wd-kambaz-link">
           Kambaz
         </NavLink>
       </NavItem>
       <NavItem>
-        <NavLink href="https://github.com/DanMccue/CS4450-A1" id="wd-github">
-          My GitHub
+        <NavLink href={FRONTEND_REPO_URL} id="wd-github">
+          Frontend Repo
+        </NavLink>
+      </NavItem>
+      <NavItem>
+        <NavLink href={BACKEND_REPO_URL} id="wd-server-repo-link">
+          Backend Repo
+        </NavLink>
+      </NavItem>
+      <NavItem>
+        <NavLink href={HTTP_SERVER} id="wd-server-link">
+          Server URL
         </NavLink>
       </NavItem>
     </Nav>

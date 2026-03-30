@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
+import Session from "./account/Session";
 
 function KambazShell({
   children,
@@ -50,7 +51,9 @@ export default function KambazLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <Provider store={store}>
-      <KambazShell>{children}</KambazShell>
+      <Session>
+        <KambazShell>{children}</KambazShell>
+      </Session>
     </Provider>
   );
 }

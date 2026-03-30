@@ -5,6 +5,7 @@ import { useRouter, redirect } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store";
 import { setCurrentUser } from "../reducer";
+import * as client from "../client";
 
 type UserProfile = {
   _id: string;
@@ -23,7 +24,7 @@ export default function Profile() {
   );
   const dispatch = useDispatch();
   const router = useRouter();
-  const [profile, setProfile] = useState<UserProfile | null>(
+  const [profile, setProfile] = useState<UserProfile | null>(() =>
     currentUser ? (currentUser as UserProfile) : null
   );
 
@@ -35,7 +36,14 @@ export default function Profile() {
     return null;
   }
 
-  const signout = () => {
+  const updateProfile = async () => {
+    const updatedProfile = await client.updateUser(profile);
+    dispatch(setCurrentUser(updatedProfile));
+    setProfile(updatedProfile);
+  };
+
+  const signout = async () => {
+    await client.signout();
     dispatch(setCurrentUser(null));
     router.push("/account/signin");
   };
@@ -111,6 +119,13 @@ export default function Profile() {
         <option value="FACULTY">Faculty</option>
         <option value="STUDENT">Student</option>
       </Form.Select>
+      <button
+        className="btn btn-primary w-100 mb-2"
+        id="wd-update-btn"
+        onClick={updateProfile}
+      >
+        Update
+      </button>
       <button
         className="btn btn-danger w-100 mb-2"
         id="wd-signout-btn"

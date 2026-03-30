@@ -1,4 +1,9 @@
 import Link from "next/link";
+import HTTP_SERVER from "@/lib/http-server";
+
+const FRONTEND_REPO_URL = "https://github.com/DanMccue/CS4450-A1";
+const BACKEND_REPO_URL = `${FRONTEND_REPO_URL}/tree/main/server`;
+
 export default function labs() {
   return (
     <div id="wd-labs">
@@ -22,12 +27,27 @@ export default function labs() {
             Lab 4: React State Management </Link>
         </li>
         <li>
+          <Link href="/labs/lab5" id="wd-lab5-link">
+            Lab 5: RESTful APIs and HTTP </Link>
+        </li>
+        <li>
           <Link href="/" id="wd-kambaz-link">
             Kambaz</Link>
         </li>
         <li>
-          <Link href="https://github.com/DanMccue/CS4450-A1" id="wd-github">
-            GitHub Repository </Link>
+          <a href={FRONTEND_REPO_URL} id="wd-github">
+            Frontend Repository
+          </a>
+        </li>
+        <li>
+          <a href={BACKEND_REPO_URL} id="wd-backend-github">
+            Backend Repository
+          </a>
+        </li>
+        <li>
+          <a href={HTTP_SERVER} id="wd-deployed-backend-url">
+            Deployed Backend URL
+          </a>
         </li>
       </ul>
     </div>

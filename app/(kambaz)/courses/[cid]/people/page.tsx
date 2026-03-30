@@ -2,11 +2,34 @@
 import { FaUserCircle } from "react-icons/fa";
 import { Table } from "react-bootstrap";
 import { useParams } from "next/navigation";
-import * as db from "../../../database";
+import { useEffect, useState } from "react";
+import * as client from "../../client";
+
+type User = {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  loginId: string;
+  section: string;
+  role: string;
+  lastActivity: string;
+  totalActivity: string;
+};
 
 export default function PeopleTable() {
   const { cid } = useParams();
-  const { users, enrollments } = db;
+  const courseId = (Array.isArray(cid) ? cid[0] : cid) ?? "";
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    if (!courseId) {
+      return;
+    }
+    client
+      .findUsersForCourse(courseId)
+      .then((usersFromServer) => setUsers(usersFromServer))
+      .catch(() => setUsers([]));
+  }, [courseId]);
 
   return (
     <div id="wd-people-table">
@@ -23,12 +46,7 @@ export default function PeopleTable() {
         </thead>
         <tbody>
           {users
-            .filter((usr: any) =>
-              enrollments.some(
-                (enrollment: any) => enrollment.user === usr._id && enrollment.course === cid
-              )
-            )
-            .map((user: any) => (
+            .map((user) => (
               <tr key={user._id}>
                 <td className="wd-full-name text-nowrap">
                   <FaUserCircle className="me-2 fs-1 text-secondary" />

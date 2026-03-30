@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-const initialState = { currentUser: null as any };
+
+type AccountState = {
+  currentUser: Record<string, unknown> | null;
+};
+
+const initialState: AccountState = { currentUser: null };
 const accountSlice = createSlice({
   name: "account",
   initialState,

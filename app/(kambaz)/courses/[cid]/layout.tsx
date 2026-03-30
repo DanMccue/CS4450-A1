@@ -2,10 +2,13 @@
 import { ReactNode, useEffect, useState } from "react";
 import CourseNavigation from "./navigation";
 import { FaAlignJustify } from "react-icons/fa6";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams, useRouter } from "next/navigation";
 import { RootState } from "../../store";
 import Breadcrumb from "./Breadcrumb";
+import { setCourses } from "../reducer";
+import { setEnrollments } from "../../enrollments/reducer";
+import * as client from "../client";
 
 type Course = { _id: string; name: string };
 type Enrollment = { _id: string; user: string; course: string };
@@ -27,7 +30,9 @@ export default function CoursesLayout({
   const { enrollments } = useSelector(
     (state: RootState) => state.enrollmentsReducer
   ) as { enrollments: Enrollment[] };
+  const dispatch = useDispatch();
   const [showNavigation, setShowNavigation] = useState(true);
+  const [pending, setPending] = useState(true);
   const course = courses.find((course) => course._id === courseId);
   const isEnrolled = Boolean(
     currentUser &&
@@ -39,12 +44,30 @@ export default function CoursesLayout({
   );
 
   useEffect(() => {
-    if (!currentUser || !isEnrolled) {
+    if (!currentUser) {
+      return;
+    }
+
+    Promise.all([client.fetchAllCourses(), client.findMyEnrollments()])
+      .then(([coursesFromServer, enrollmentsFromServer]) => {
+        dispatch(setCourses(coursesFromServer));
+        dispatch(setEnrollments(enrollmentsFromServer));
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setPending(false);
+      });
+  }, [currentUser, dispatch]);
+
+  useEffect(() => {
+    if (!pending && (!currentUser || !isEnrolled)) {
       router.replace("/dashboard");
     }
-  }, [currentUser, isEnrolled, router]);
+  }, [currentUser, isEnrolled, pending, router]);
 
-  if (!currentUser || !isEnrolled) {
+  if (pending || !currentUser || !isEnrolled) {
     return null;
   }
 

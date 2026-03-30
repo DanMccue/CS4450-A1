@@ -4,31 +4,26 @@ import { Form } from "react-bootstrap";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "../reducer";
-import * as db from "../../database";
+import * as client from "../client";
 import { useRouter } from "next/navigation";
-
-type UserRecord = {
-  username: string;
-  password: string;
-};
 
 export default function Signin() {
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
+  const [errorMessage, setErrorMessage] = useState("");
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const signin = () => {
-    const user = (db.users as UserRecord[]).find(
-      (u) =>
-        u.username === credentials.username &&
-        u.password === credentials.password
-    );
-    if (user) {
+  const signin = async () => {
+    try {
+      const user = await client.signin(credentials);
       dispatch(setCurrentUser(user));
+      setErrorMessage("");
       router.push("/dashboard");
+    } catch {
+      setErrorMessage("Invalid username or password.");
     }
   };
 
@@ -61,6 +56,11 @@ export default function Signin() {
       >
         Sign in
       </button>
+      {errorMessage && (
+        <div id="wd-signin-error-message" className="alert alert-danger">
+          {errorMessage}
+        </div>
+      )}
       <Link id="wd-signup-link" href="/account/signup">
         Sign up
       </Link>
