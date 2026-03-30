@@ -2,7 +2,7 @@ import Link from "next/link";
 import HTTP_SERVER from "@/lib/http-server";
 
 const FRONTEND_REPO_URL = "https://github.com/DanMccue/CS4450-A1";
-const BACKEND_REPO_URL = `${FRONTEND_REPO_URL}/tree/main/server`;
+const BACKEND_REPO_URL = `https://github.com/DanMccue/kambaz-node-server-app`;
 
 export default function labs() {
   return (
