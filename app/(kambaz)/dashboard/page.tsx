@@ -151,12 +151,12 @@ export default function Dashboard() {
   };
 
   const onEnroll = async (courseId: string) => {
-    await client.enrollIntoCourse(courseId);
+    await client.enrollIntoCourse("current", courseId);
     refreshEnrollments();
   };
 
   const onUnenroll = async (courseId: string) => {
-    await client.unenrollFromCourse(courseId);
+    await client.unenrollFromCourse("current", courseId);
     refreshEnrollments();
   };
 
